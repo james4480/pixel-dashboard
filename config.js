@@ -15,9 +15,9 @@ window.DASHBOARD_CONFIG = {
   use24HourClock: true,
 
   // Night text opacity. Try 0.06–0.16 on the Pixel.
-  nightOpacity: 0.10,
+  nightOpacity: 0.1,
 
   // Optional offsets relative to calculated sunset/sunrise.
-  nightStartsMinutesAfterSunset: -720,
-  dayStartsMinutesAfterSunrise: -720
+  nightStartsMinutesAfterSunset: 20,
+  dayStartsMinutesAfterSunrise: 20
 };
