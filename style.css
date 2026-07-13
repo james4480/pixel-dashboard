@@ -110,7 +110,7 @@ body {
   grid-column: 6 / -1;
   min-width: 0;
   overflow: hidden;
-padding-top: 1rem;
+padding-top: 0;
   padding-left: 4vw;
   border-left: 2px solid var(--day-divider);
 }
