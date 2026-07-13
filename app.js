@@ -5,7 +5,6 @@
 
   const clockEl = document.getElementById("clock");
   const clockMainEl = document.getElementById("clock-main");
-  const clockSecondsEl = document.getElementById("clock-seconds");
   const dateEl = document.getElementById("date");
   const temperatureRangeEl = document.getElementById("temperature-range");
   const weatherConditionEl = document.getElementById("weather-condition");
@@ -16,6 +15,26 @@
   let sunrise = null;
   let sunset = null;
   let lastDisplayedMinute = null;
+  let lastCalendarSuccess = null;
+  let calendarRetryTimer = null;
+  let calendarRetryAttempt = 0;
+  let calendarRequestInFlight = false;
+
+
+  function fitClockToAvailableWidth() {
+    const panel = document.querySelector(".left-panel");
+    if (!panel || !clockMainEl) return;
+
+    clockMainEl.style.transform = "scaleX(1)";
+
+    const availableWidth = panel.clientWidth;
+    const renderedWidth = clockMainEl.scrollWidth;
+
+    if (renderedWidth > availableWidth && renderedWidth > 0) {
+      const scale = Math.max(0.72, availableWidth / renderedWidth);
+      clockMainEl.style.transform = `scaleX(${scale})`;
+    }
+  }
 
   document.documentElement.style.setProperty(
     "--night-opacity",
@@ -42,13 +61,6 @@
       timeZone: cfg.timezone
     }).format(now);
 
-    const secondsText = new Intl.DateTimeFormat("en-GB", {
-      second: "2-digit",
-      timeZone: cfg.timezone
-    }).format(now);
-
-    clockSecondsEl.textContent = secondsText;
-
     if (timeText !== lastDisplayedMinute) {
       clockMainEl.textContent = timeText;
       lastDisplayedMinute = timeText;
@@ -56,6 +68,7 @@
       clockEl.classList.remove("tick");
       void clockEl.offsetWidth;
       clockEl.classList.add("tick");
+      requestAnimationFrame(fitClockToAvailableWidth);
     }
 
     const parts = new Intl.DateTimeFormat("en-GB", {
@@ -268,13 +281,60 @@
     eventsEl.replaceChildren(fragment);
   }
 
-  async function loadCalendar() {
+  function formatLastUpdated(date) {
+    if (!date) return "never";
+
+    return new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: cfg.timezone
+    }).format(date);
+  }
+
+  function showCalendarStatus(message, isError = false) {
+    statusEl.textContent = message;
+    statusEl.classList.add("visible");
+    statusEl.classList.toggle("error", isError);
+  }
+
+  function hideCalendarStatus() {
+    statusEl.textContent = "";
+    statusEl.classList.remove("visible", "error");
+  }
+
+  function clearCalendarRetry() {
+    if (calendarRetryTimer) {
+      clearTimeout(calendarRetryTimer);
+      calendarRetryTimer = null;
+    }
+  }
+
+  function scheduleCalendarRetry() {
+    clearCalendarRetry();
+
+    const retryDelays = [15_000, 30_000, 60_000, 120_000, 300_000];
+    const delay = retryDelays[Math.min(calendarRetryAttempt, retryDelays.length - 1)];
+    calendarRetryAttempt += 1;
+
+    calendarRetryTimer = setTimeout(() => {
+      loadCalendar({ isRetry: true });
+    }, delay);
+  }
+
+  async function loadCalendar(options = {}) {
     if (!cfg.calendarEndpoint || cfg.calendarEndpoint.includes("PASTE_")) {
       eventsEl.innerHTML =
         '<div class="error">Add your Apps Script URL in config.js</div>';
+      showCalendarStatus("Calendar endpoint is not configured", true);
       return;
     }
 
+    if (calendarRequestInFlight) {
+      return;
+    }
+
+    calendarRequestInFlight = true;
     eventsEl.classList.add("refreshing");
 
     try {
@@ -291,15 +351,24 @@
       const data = await response.json();
       renderEvents(data.events || []);
 
-      statusEl.textContent = `Updated ${new Intl.DateTimeFormat("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: cfg.timezone
-      }).format(new Date())}`;
+      lastCalendarSuccess = new Date();
+      calendarRetryAttempt = 0;
+      clearCalendarRetry();
+      hideCalendarStatus();
     } catch (error) {
       console.error(error);
-      eventsEl.innerHTML = '<div class="error">Calendar unavailable</div>';
+
+      const lastUpdatedText = formatLastUpdated(lastCalendarSuccess);
+      showCalendarStatus(
+        `Calendar update failed · Last updated ${lastUpdatedText}`,
+        true
+      );
+
+      if (!options.isRetry || navigator.onLine) {
+        scheduleCalendarRetry();
+      }
     } finally {
+      calendarRequestInFlight = false;
       window.setTimeout(() => eventsEl.classList.remove("refreshing"), 80);
     }
   }
@@ -313,6 +382,7 @@
   }
 
   updateClock();
+  fitClockToAvailableWidth();
   shiftPixels();
   loadWeather();
   loadCalendar();
@@ -321,5 +391,31 @@
   setInterval(shiftPixels, 60000);
   setInterval(loadCalendar, 60 * 1000);
   setInterval(loadWeather, 60 * 60 * 1000);
+  window.addEventListener("resize", () => {
+    requestAnimationFrame(fitClockToAvailableWidth);
+  });
+
+  window.addEventListener("orientationchange", () => {
+    window.setTimeout(fitClockToAvailableWidth, 250);
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      loadCalendar();
+      loadWeather();
+    }
+  });
+
+  window.addEventListener("online", () => {
+    clearCalendarRetry();
+    calendarRetryAttempt = 0;
+    loadCalendar();
+    loadWeather();
+  });
+
+  window.addEventListener("focus", () => {
+    loadCalendar();
+  });
+
   setInterval(() => window.location.reload(), 24 * 60 * 60 * 1000);
 })();
