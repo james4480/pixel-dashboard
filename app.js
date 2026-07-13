@@ -319,7 +319,7 @@
 
   setInterval(updateClock, 1000);
   setInterval(shiftPixels, 60000);
-  setInterval(loadCalendar, 5 * 60 * 1000);
+  setInterval(loadCalendar, 60 * 1000);
   setInterval(loadWeather, 60 * 60 * 1000);
   setInterval(() => window.location.reload(), 24 * 60 * 60 * 1000);
 })();
