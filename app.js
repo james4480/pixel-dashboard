@@ -323,4 +323,3 @@
   setInterval(loadWeather, 60 * 60 * 1000);
   setInterval(() => window.location.reload(), 24 * 60 * 60 * 1000);
 })();
-
