@@ -1,11 +1,11 @@
 // Edit these values before publishing.
 window.DASHBOARD_CONFIG = {
   // Copy the /exec URL from your deployed Google Apps Script.
-  calendarEndpoint: "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE",
+  calendarEndpoint: "https://script.google.com/macros/s/AKfycby8YUVvb7UgZBveSc2OJ4j3I77Ju27_T_6Ay0AXle9edYuka7SA_U7AMDOZsreXfBYy/exec",
 
   // Your location. Example below is central Zurich.
-  latitude: 47.3769,
-  longitude: 8.5417,
+  latitude: 47.168,
+  longitude: 8.517,
   timezone: "Europe/Zurich",
 
   // "celsius" or "fahrenheit"
