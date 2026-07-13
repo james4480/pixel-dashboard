@@ -1,324 +1,367 @@
 :root {
-  color-scheme: light dark;
+    color-scheme: light dark;
 
-  --day-background: #fafafa;
-  --day-foreground: #111111;
-  --day-secondary: #858585;
-  --day-tertiary: #b0b0b0;
-  --day-divider: #e5e5e5;
+    --day-background: #fafafa;
+    --day-foreground: #111111;
+    --day-secondary: #888888;
+    --day-tertiary: #b5b5b5;
+    --day-divider: #e6e6e6;
 
-  --night-background: #000000;
-  --night-foreground: #bdbdbd;
+    --night-background: #000000;
+    --night-foreground: #bdbdbd;
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html,
 body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
 
-  background: var(--day-background);
-  color: var(--day-foreground);
+    background: var(--day-background);
+    color: var(--day-foreground);
 
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
 
-  transition:
-    background-color 1s ease,
-    color 1s ease;
+    transition:
+        background-color .8s ease,
+        color .8s ease;
 }
+
+/* =======================================================
+   MAIN LAYOUT
+   ======================================================= */
 
 #dashboard {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  width: 100vw;
-  height: 100vh;
 
-  padding: 7vh 6vw;
+    display: grid;
 
-  column-gap: 2.5vw;
+    grid-template-columns: 42% 58%;
+
+    width: 100vw;
+    height: 100vh;
+
+    padding: 7vh 5vw;
+
+    column-gap: 3vw;
+
 }
 
-/* ---------------- LEFT ---------------- */
+/* =======================================================
+   LEFT
+   ======================================================= */
 
 .left-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
 
-  min-width: 0;
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    padding-right: 1vw;
+
 }
 
 #clock {
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
+
+    width: 100%;
+
+    overflow: visible;
+
+    white-space: nowrap;
+
+    font-variant-numeric: tabular-nums;
+
 }
 
 #clock-main {
-  display: inline-block;
 
-  margin-left: -0.04em;
+    display: inline-block;
 
-  font-size: clamp(5rem, 16vw, 12rem);
-  line-height: .82;
-  letter-spacing: -.065em;
-  font-weight: 800;
+    max-width: 100%;
 
-  font-variant-numeric: tabular-nums;
+    margin: 0;
+
+    font-size: clamp(4.8rem, 14vw, 10rem);
+
+    font-weight: 800;
+
+    line-height: .86;
+
+    letter-spacing: -.055em;
+
+    transform-origin: left center;
+
 }
 
 #date {
-  margin-top: 5vh;
 
-  font-size: clamp(1.6rem,3vw,2.9rem);
+    margin-top: 5vh;
 
-  font-weight:500;
+    font-size: clamp(1.6rem,3vw,2.8rem);
 
-  line-height:1.2;
+    font-weight:500;
+
+    line-height:1.2;
+
 }
 
 #weather {
 
-  margin-top:3vh;
+    margin-top:3vh;
 
-  font-size:clamp(.8rem,1.5vw,1.4rem);
+    font-size:clamp(.8rem,1.5vw,1.35rem);
 
-  color:#888;
+    color:var(--day-secondary);
 
-  font-weight:500;
-
-}
-
-#weather-condition{
-
-  margin-top:.25rem;
-
-  color:#b0b0b0;
-
-  font-weight:400;
+    font-weight:500;
 
 }
 
-/* ---------------- RIGHT ---------------- */
+#weather-condition {
+
+    margin-top:.25rem;
+
+    color:var(--day-tertiary);
+
+    font-weight:400;
+
+}
+
+/* =======================================================
+   RIGHT
+   ======================================================= */
 
 .right-panel {
 
-  min-width:0;
+    min-width:0;
 
-  overflow-y:auto;
+    overflow-y:auto;
 
-  padding-top:0;          /* <-- removed the gap */
+    padding-top:0;
 
-  padding-left:4vw;
+    padding-left:3vw;
 
-  border-left:2px solid var(--day-divider);
-
-}
-
-#events{
-
-  transition:none;
+    border-left:2px solid var(--day-divider);
 
 }
 
-.day-group{
+#events {
 
-  margin-bottom:2.5rem;
-
-}
-
-.day-label{
-
-  color:#999;
-
-  font-size:.95rem;
-
-  letter-spacing:.12em;
-
-  font-weight:700;
-
-  margin-bottom:1rem;
-
-  text-transform:uppercase;
+    opacity:1;
 
 }
 
-.day-label.today{
+.day-group {
 
-  color:#111;
-
-  font-weight:800;
+    margin-bottom:2rem;
 
 }
 
-.event{
+.day-label {
 
-  display:grid;
+    margin-bottom:.9rem;
 
-  grid-template-columns:6rem 1fr;
+    color:#9c9c9c;
 
-  gap:1rem;
+    font-size:.9rem;
 
-  margin-bottom:.5rem;
+    font-weight:700;
 
-  font-size:1.25rem;
+    letter-spacing:.12em;
 
-}
-
-.event-time{
-
-  color:#888;
-
-  font-variant-numeric:tabular-nums;
+    text-transform:uppercase;
 
 }
 
-.event-title{
+.day-label.today {
 
-  font-weight:500;
+    color:#111;
 
-  white-space:nowrap;
+    font-weight:800;
 
-  overflow:hidden;
+}
 
-  text-overflow:ellipsis;
+.event {
+
+    display:grid;
+
+    grid-template-columns:5.5rem 1fr;
+
+    gap:1rem;
+
+    margin-bottom:.45rem;
+
+    font-size:1.2rem;
+
+    line-height:1.35;
+
+}
+
+.event-time {
+
+    color:#8b8b8b;
+
+    font-variant-numeric:tabular-nums;
+
+}
+
+.event-title {
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+    font-weight:500;
 
 }
 
 .empty,
-.error{
+.error {
 
-  color:#888;
-
-}
-
-/* ---------------- STATUS ---------------- */
-
-#status{
-
-  position:fixed;
-
-  bottom:1rem;
-
-  right:1rem;
-
-  font-size:.7rem;
-
-  opacity:0;
+    color:#888;
 
 }
 
-#status.visible{
+/* =======================================================
+   STATUS
+   ======================================================= */
 
-  opacity:1;
+#status {
 
-}
+    position:fixed;
 
-/* ---------------- NIGHT MODE ---------------- */
+    right:1rem;
 
-body.night{
+    bottom:1rem;
 
-  background:#000;
+    font-size:.7rem;
 
-  color:#bdbdbd;
-
-}
-
-body.night #dashboard{
-
-  display:flex;
-
-  flex-direction:column;
-
-  justify-content:center;
-
-  align-items:flex-start;
-
-  padding:10vh 8vw;
-
-  opacity:var(--night-opacity,.08);
+    opacity:0;
 
 }
 
-body.night #clock-main{
+#status.visible {
 
-  font-size:clamp(6rem,20vw,15rem);
-
-  color:#bdbdbd;
+    opacity:1;
 
 }
 
-body.night #date{
+/* =======================================================
+   NIGHT
+   ======================================================= */
 
-  color:#bdbdbd;
+body.night {
+
+    background:var(--night-background);
+
+    color:var(--night-foreground);
+
+}
+
+body.night #dashboard {
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:flex-start;
+
+    padding:10vh 8vw;
+
+    opacity:var(--night-opacity,.08);
+
+}
+
+body.night #clock-main {
+
+    font-size:clamp(6rem,18vw,14rem);
+
+    color:var(--night-foreground);
+
+}
+
+body.night #date {
+
+    color:var(--night-foreground);
 
 }
 
 body.night #weather,
 body.night .right-panel,
-body.night #status{
+body.night #status {
 
-  display:none;
+    display:none;
 
 }
 
-/* ---------------- BURN-IN PROTECTION ---------------- */
+/* =======================================================
+   BURN-IN PROTECTION
+   ======================================================= */
 
-body.shift-0 #dashboard{
-  transform:translate(0,0);
+body.shift-0 #dashboard {
+    transform:translate(0,0);
 }
 
-body.shift-1 #dashboard{
-  transform:translate(3px,1px);
+body.shift-1 #dashboard {
+    transform:translate(2px,1px);
 }
 
-body.shift-2 #dashboard{
-  transform:translate(-2px,3px);
+body.shift-2 #dashboard {
+    transform:translate(-2px,2px);
 }
 
-body.shift-3 #dashboard{
-  transform:translate(2px,-2px);
+body.shift-3 #dashboard {
+    transform:translate(2px,-2px);
 }
 
-body.shift-4 #dashboard{
-  transform:translate(-3px,-1px);
+body.shift-4 #dashboard {
+    transform:translate(-2px,-1px);
 }
 
-/* ---------------- PORTRAIT ---------------- */
+/* =======================================================
+   PORTRAIT
+   ======================================================= */
 
-@media (orientation:portrait){
+@media (orientation:portrait) {
 
-  #dashboard{
+    #dashboard {
 
-    grid-template-columns:1fr;
+        grid-template-columns:1fr;
 
-    grid-template-rows:auto 1fr;
+        grid-template-rows:auto 1fr;
 
-    gap:4vh;
+        gap:3vh;
 
-  }
+    }
 
-  .right-panel{
+    .right-panel {
 
-    padding-top:2rem;
+        border-left:none;
 
-    padding-left:0;
+        border-top:2px solid var(--day-divider);
 
-    border-left:none;
+        padding-left:0;
 
-    border-top:2px solid var(--day-divider);
+        padding-top:2vh;
 
-  }
+    }
 
-  #clock-main{
+    #clock-main {
 
-    font-size:clamp(5rem,24vw,9rem);
+        font-size:clamp(4.8rem,22vw,8rem);
 
-  }
+    }
 
 }
