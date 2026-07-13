@@ -1,11 +1,14 @@
 :root {
   color-scheme: light dark;
+
   --day-background: #fafafa;
   --day-foreground: #111111;
-  --day-secondary: #888888;
+  --day-secondary: #858585;
+  --day-tertiary: #b0b0b0;
   --day-divider: #e5e5e5;
+
   --night-background: #000000;
-  --night-foreground: #ffffff;
+  --night-foreground: #bdbdbd;
 }
 
 * {
@@ -22,95 +25,122 @@ body {
   color: var(--day-foreground);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   transition:
-    background 0.8s ease,
-    color 0.8s ease;
+    background-color 1.2s ease,
+    color 1.2s ease;
 }
 
 #dashboard {
   display: grid;
-  grid-template-columns: 46% 54%;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   width: 100vw;
   height: 100vh;
   padding: 7vh 6vw;
-  gap: 5vw;
+  column-gap: 2.4vw;
   transition:
-    background 0.8s ease,
-    color 0.8s ease,
-    opacity 0.8s ease,
-    transform 0.8s ease;
+    opacity 1.2s ease,
+    transform 1.2s ease;
 }
 
 .left-panel {
+  grid-column: 1 / span 5;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  align-items: flex-start;
   min-width: 0;
 }
 
 #clock {
-  font-size: clamp(6rem, 20vw, 15rem);
+  margin-left: -0.055em;
+  font-size: clamp(7rem, 22.5vw, 17rem);
   font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.07em;
+  line-height: 0.82;
+  letter-spacing: -0.075em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  margin-left: -0.05em;
+  transform-origin: left center;
+}
+
+#clock.tick {
+  animation: clock-fade 420ms ease;
+}
+
+@keyframes clock-fade {
+  0% {
+    opacity: 0.68;
+    transform: translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 #date {
-  margin-top: 4vh;
-  font-size: clamp(1.6rem, 3.2vw, 3rem);
+  margin-top: 5vh;
+  font-size: clamp(1.6rem, 3.1vw, 2.9rem);
   line-height: 1.2;
   font-weight: 500;
+  letter-spacing: -0.025em;
 }
 
 #weather {
   margin-top: 3vh;
   color: var(--day-secondary);
-  font-size: clamp(0.8rem, 1.6vw, 1.5rem);
+  font-size: clamp(0.8rem, 1.55vw, 1.45rem);
+  line-height: 1.45;
   font-weight: 500;
+}
+
+#weather-condition {
+  margin-top: 0.3vh;
+  color: var(--day-tertiary);
+  font-weight: 400;
 }
 
 .right-panel {
+  grid-column: 6 / -1;
+  min-width: 0;
   overflow: hidden;
-  border-left: 2px solid var(--day-divider);
+  padding-top: clamp(8rem, 18.2vw, 13.9rem);
   padding-left: 4vw;
+  border-left: 2px solid var(--day-divider);
 }
 
-.right-panel h1 {
-  margin: 0 0 2vh;
-  color: var(--day-secondary);
-  font-size: clamp(1rem, 2vw, 1.7rem);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+#events {
+  opacity: 1;
+  transition: opacity 450ms ease;
+}
+
+#events.refreshing {
+  opacity: 0.35;
 }
 
 .day-group {
-  margin-bottom: 2vh;
+  margin-bottom: 2.3vh;
 }
 
 .day-label {
+  margin-bottom: 0.9vh;
   color: var(--day-secondary);
-  font-size: clamp(0.8rem, 1.3vw, 1.2rem);
+  font-size: clamp(0.8rem, 1.25vw, 1.15rem);
   font-weight: 700;
-  margin-bottom: 0.5vh;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .event {
   display: grid;
-  grid-template-columns: 6.5rem 1fr;
-  gap: 1rem;
-  padding: 0.45vh 0;
-  font-size: clamp(1rem, 1.9vw, 1.55rem);
-  line-height: 1.25;
+  grid-template-columns: clamp(5rem, 7vw, 7rem) minmax(0, 1fr);
+  gap: 1.1rem;
+  padding: 0.52vh 0;
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  line-height: 1.3;
 }
 
 .event-time {
   color: var(--day-secondary);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .event-title {
@@ -118,22 +148,24 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .empty,
 .error {
   color: var(--day-secondary);
-  font-size: clamp(1rem, 1.8vw, 1.4rem);
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
 }
 
 #status {
   position: fixed;
   right: 1rem;
-  bottom: 0.7rem;
-  color: #777777;
-  font-size: 0.75rem;
+  bottom: 0.75rem;
+  color: #9a9a9a;
+  font-size: 0.7rem;
 }
 
+/* Night mode: OLED black, dim grey text, time and date only. */
 body.night {
   background: var(--night-background);
   color: var(--night-foreground);
@@ -146,21 +178,23 @@ body.night #dashboard {
   align-items: flex-start;
   width: 100vw;
   height: 100vh;
-  padding: 10vh;
-  gap: 0;
-  opacity: var(--night-opacity, 0.10);
+  padding: 10vh 8vw;
+  opacity: var(--night-opacity, 0.08);
 }
 
 body.night .left-panel {
   display: block;
+  width: 100%;
 }
 
 body.night #clock {
-  font-size: clamp(6rem, 24vw, 17rem);
+  color: var(--night-foreground);
+  font-size: clamp(7rem, 24vw, 18rem);
 }
 
 body.night #date {
   margin-top: 5vh;
+  color: var(--night-foreground);
 }
 
 body.night #weather,
@@ -169,30 +203,52 @@ body.night #status {
   display: none;
 }
 
-body.shift-a #dashboard {
-  transform: translate(0, 0);
-}
-
-body.shift-b #dashboard {
-  transform: translate(3px, 2px);
-}
+/* Burn-in mitigation: a subtle movement every 12 minutes. */
+body.shift-0 #dashboard { transform: translate(0, 0); }
+body.shift-1 #dashboard { transform: translate(3px, 1px); }
+body.shift-2 #dashboard { transform: translate(-2px, 3px); }
+body.shift-3 #dashboard { transform: translate(2px, -2px); }
+body.shift-4 #dashboard { transform: translate(-3px, -1px); }
 
 @media (orientation: portrait) {
   #dashboard {
     grid-template-columns: 1fr;
-    grid-template-rows: 42% 58%;
-    gap: 2vh;
+    grid-template-rows: auto 1fr;
+    gap: 4vh;
+    padding: 6vh 7vw;
+  }
+
+  .left-panel,
+  .right-panel {
+    grid-column: 1;
+  }
+
+  #clock {
+    font-size: clamp(5.5rem, 28vw, 10rem);
   }
 
   .right-panel {
+    padding-top: 3vh;
+    padding-left: 0;
     border-left: 0;
     border-top: 2px solid var(--day-divider);
-    padding-left: 0;
-    padding-top: 2vh;
   }
 
   body.night #dashboard {
     display: flex;
     padding: 8vh 7vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  #dashboard,
+  #events {
+    transition: none;
+  }
+
+  #clock.tick {
+    animation: none;
   }
 }
