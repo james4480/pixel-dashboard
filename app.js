@@ -42,27 +42,42 @@
     updateNightMode(now);
   }
 
-  function updateNightMode(now) {
-    if (!sunrise || !sunset) return;
-
-    const nightStart = new Date(sunset.getTime() + cfg.nightStartsMinutesAfterSunset * 60000);
-    const dayStart = new Date(sunrise.getTime() + cfg.dayStartsMinutesAfterSunrise * 60000);
-    const isNight = now < dayStart || now >= nightStart;
-    document.body.classList.toggle("night", isNight);
+ function updateNightMode(now) {
+  if (!sunrise || !sunset) {
+    document.body.classList.remove("night");
+    return;
   }
+
+  const nightStart = new Date(
+    sunset.getTime() +
+    cfg.nightStartsMinutesAfterSunset * 60000
+  );
+
+  const dayStart = new Date(
+    sunrise.getTime() +
+    cfg.dayStartsMinutesAfterSunrise * 60000
+  );
+
+  const isNight =
+    now.getTime() < dayStart.getTime() ||
+    now.getTime() >= nightStart.getTime();
+
+  document.body.classList.toggle("night", isNight);
+}
 
   async function loadWeather() {
     const unit = cfg.temperatureUnit === "fahrenheit" ? "fahrenheit" : "celsius";
     const symbol = unit === "fahrenheit" ? "°F" : "°C";
 
-    const params = new URLSearchParams({
-      latitude: cfg.latitude,
-      longitude: cfg.longitude,
-      daily: "temperature_2m_max,temperature_2m_min,sunrise,sunset",
-      temperature_unit: unit,
-      timezone: cfg.timezone,
-      forecast_days: "2"
-    });
+const params = new URLSearchParams({
+  latitude: cfg.latitude,
+  longitude: cfg.longitude,
+  daily: "temperature_2m_max,temperature_2m_min,sunrise,sunset",
+  temperature_unit: unit,
+  timezone: cfg.timezone,
+  timeformat: "unixtime",
+  forecast_days: "2"
+});
 
     try {
       const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
@@ -73,8 +88,8 @@
         `High ${Math.round(data.daily.temperature_2m_max[0])}${symbol}  ·  ` +
         `Low ${Math.round(data.daily.temperature_2m_min[0])}${symbol}`;
 
-      sunrise = new Date(data.daily.sunrise[0]);
-      sunset = new Date(data.daily.sunset[0]);
+sunrise = new Date(data.daily.sunrise[0] * 1000);
+sunset = new Date(data.daily.sunset[0] * 1000);
       updateNightMode(new Date());
     } catch (error) {
       console.error(error);
