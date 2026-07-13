@@ -4,6 +4,8 @@
   const cfg = window.DASHBOARD_CONFIG;
 
   const clockEl = document.getElementById("clock");
+  const clockMainEl = document.getElementById("clock-main");
+  const clockSecondsEl = document.getElementById("clock-seconds");
   const dateEl = document.getElementById("date");
   const temperatureRangeEl = document.getElementById("temperature-range");
   const weatherConditionEl = document.getElementById("weather-condition");
@@ -40,8 +42,15 @@
       timeZone: cfg.timezone
     }).format(now);
 
+    const secondsText = new Intl.DateTimeFormat("en-GB", {
+      second: "2-digit",
+      timeZone: cfg.timezone
+    }).format(now);
+
+    clockSecondsEl.textContent = secondsText;
+
     if (timeText !== lastDisplayedMinute) {
-      clockEl.textContent = timeText;
+      clockMainEl.textContent = timeText;
       lastDisplayedMinute = timeText;
 
       clockEl.classList.remove("tick");
