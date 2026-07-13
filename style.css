@@ -172,6 +172,16 @@ body {
   bottom: 0.75rem;
   color: #9a9a9a;
   font-size: 0.7rem;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+#status.visible {
+  opacity: 1;
+}
+
+#status.error {
+  color: #a05a5a;
 }
 
 /* Night mode: OLED black, dim grey text, time and date only. */
