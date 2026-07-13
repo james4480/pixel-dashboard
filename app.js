@@ -254,10 +254,19 @@
       const wrapper = document.createElement("section");
       wrapper.className = "day-group";
 
-      const heading = document.createElement("div");
-      heading.className = "day-label";
-      heading.textContent = dayHeading(new Date(group[0].start));
-      wrapper.appendChild(heading);
+const heading = document.createElement("div");
+
+const headingText = dayHeading(new Date(group[0].start));
+
+heading.className = "day-label";
+
+if (headingText === "Today") {
+    heading.classList.add("today");
+}
+
+heading.textContent = headingText.toUpperCase();
+
+wrapper.appendChild(heading);
 
       for (const item of group) {
         const row = document.createElement("div");
