@@ -135,6 +135,11 @@ padding-top: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+
+.day-label.today {
+    color: #111111;
+
+    font-weight: 800;
 }
 
 .event {
