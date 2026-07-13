@@ -18,6 +18,6 @@ window.DASHBOARD_CONFIG = {
   nightOpacity: 0.10,
 
   // Optional offsets relative to calculated sunset/sunrise.
-  nightStartsMinutesAfterSunset: 0,
-  dayStartsMinutesAfterSunrise: 0
+  nightStartsMinutesAfterSunset: -720,
+  dayStartsMinutesAfterSunrise: -720
 };
