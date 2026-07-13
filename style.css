@@ -43,6 +43,7 @@ body {
 
 .left-panel {
   grid-column: 1 / span 5;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -50,14 +51,35 @@ body {
 }
 
 #clock {
-  margin-left: -0.055em;
-  font-size: clamp(7rem, 22.5vw, 17rem);
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  transform-origin: left center;
+}
+
+#clock-main {
+  display: block;
+  min-width: 0;
+  margin-left: -0.045em;
+  font-size: clamp(6rem, 18.5vw, 14rem);
   font-weight: 800;
   line-height: 0.82;
-  letter-spacing: -0.075em;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  transform-origin: left center;
+  letter-spacing: -0.07em;
+}
+
+#clock-seconds {
+  display: block;
+  flex: 0 0 auto;
+  margin: 0 0 0.16em 0.32em;
+  font-size: 10%;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--day-secondary);
 }
 
 #clock.tick {
@@ -189,7 +211,15 @@ body.night .left-panel {
 
 body.night #clock {
   color: var(--night-foreground);
-  font-size: clamp(7rem, 24vw, 18rem);
+}
+
+body.night #clock-main {
+  font-size: clamp(7rem, 22vw, 16rem);
+}
+
+body.night #clock-seconds {
+  color: var(--night-foreground);
+  font-size: 10%;
 }
 
 body.night #date {
@@ -223,8 +253,8 @@ body.shift-4 #dashboard { transform: translate(-3px, -1px); }
     grid-column: 1;
   }
 
-  #clock {
-    font-size: clamp(5.5rem, 28vw, 10rem);
+  #clock-main {
+    font-size: clamp(5rem, 24vw, 9rem);
   }
 
   .right-panel {
