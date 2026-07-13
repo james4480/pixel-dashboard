@@ -21,261 +21,304 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+
   background: var(--day-background);
   color: var(--day-foreground);
+
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
   transition:
-    background-color 1.2s ease,
-    color 1.2s ease;
+    background-color 1s ease,
+    color 1s ease;
 }
 
 #dashboard {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: 5fr 7fr;
   width: 100vw;
   height: 100vh;
+
   padding: 7vh 6vw;
-  column-gap: 2.4vw;
-  transition:
-    opacity 1.2s ease,
-    transform 1.2s ease;
+
+  column-gap: 2.5vw;
 }
 
+/* ---------------- LEFT ---------------- */
+
 .left-panel {
-  grid-column: 1 / span 5;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
   min-width: 0;
 }
 
 #clock {
   width: 100%;
-  min-width: 0;
   white-space: nowrap;
-  overflow: visible;
-  font-variant-numeric: tabular-nums;
-  transform-origin: left center;
+  overflow: hidden;
 }
 
 #clock-main {
   display: inline-block;
-  margin-left: -0.035em;
-  font-size: clamp(4.8rem, 15.8vw, 12rem);
+
+  margin-left: -0.04em;
+
+  font-size: clamp(5rem, 16vw, 12rem);
+  line-height: .82;
+  letter-spacing: -.065em;
   font-weight: 800;
-  line-height: 0.82;
-  letter-spacing: -0.065em;
-  transform-origin: left center;
-}
 
-#clock.tick {
-  animation: clock-fade 420ms ease;
-}
-
-@keyframes clock-fade {
-  0% {
-    opacity: 0.68;
-    transform: translateY(2px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  font-variant-numeric: tabular-nums;
 }
 
 #date {
   margin-top: 5vh;
-  font-size: clamp(1.6rem, 3.1vw, 2.9rem);
-  line-height: 1.2;
-  font-weight: 500;
-  letter-spacing: -0.025em;
+
+  font-size: clamp(1.6rem,3vw,2.9rem);
+
+  font-weight:500;
+
+  line-height:1.2;
 }
 
 #weather {
-  margin-top: 3vh;
-  color: var(--day-secondary);
-  font-size: clamp(0.8rem, 1.55vw, 1.45rem);
-  line-height: 1.45;
-  font-weight: 500;
+
+  margin-top:3vh;
+
+  font-size:clamp(.8rem,1.5vw,1.4rem);
+
+  color:#888;
+
+  font-weight:500;
+
 }
 
-#weather-condition {
-  margin-top: 0.3vh;
-  color: var(--day-tertiary);
-  font-weight: 400;
+#weather-condition{
+
+  margin-top:.25rem;
+
+  color:#b0b0b0;
+
+  font-weight:400;
+
 }
+
+/* ---------------- RIGHT ---------------- */
 
 .right-panel {
-  grid-column: 6 / -1;
-  min-width: 0;
-  overflow: hidden;
-padding-top: 0;
-  padding-left: 4vw;
-  border-left: 2px solid var(--day-divider);
+
+  min-width:0;
+
+  overflow-y:auto;
+
+  padding-top:0;          /* <-- removed the gap */
+
+  padding-left:4vw;
+
+  border-left:2px solid var(--day-divider);
+
 }
 
-#events {
-  opacity: 1;
-  transition: opacity 450ms ease;
+#events{
+
+  transition:none;
+
 }
 
-#events.refreshing {
-  opacity: 0.35;
+.day-group{
+
+  margin-bottom:2.5rem;
+
 }
 
-.day-group {
-  margin-bottom: 2.3vh;
+.day-label{
+
+  color:#999;
+
+  font-size:.95rem;
+
+  letter-spacing:.12em;
+
+  font-weight:700;
+
+  margin-bottom:1rem;
+
+  text-transform:uppercase;
+
 }
 
-.day-label {
-  margin-bottom: 0.9vh;
-  color: var(--day-secondary);
-  font-size: clamp(0.8rem, 1.25vw, 1.15rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.day-label.today{
 
-.day-label.today {
-    color: #111111;
+  color:#111;
 
-    font-weight: 800;
+  font-weight:800;
+
 }
 
-.event {
-  display: grid;
-  grid-template-columns: clamp(5rem, 7vw, 7rem) minmax(0, 1fr);
-  gap: 1.1rem;
-  padding: 0.52vh 0;
-  font-size: clamp(1rem, 1.8vw, 1.5rem);
-  line-height: 1.3;
+.event{
+
+  display:grid;
+
+  grid-template-columns:6rem 1fr;
+
+  gap:1rem;
+
+  margin-bottom:.5rem;
+
+  font-size:1.25rem;
+
 }
 
-.event-time {
-  color: var(--day-secondary);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+.event-time{
+
+  color:#888;
+
+  font-variant-numeric:tabular-nums;
+
 }
 
-.event-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+.event-title{
+
+  font-weight:500;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
 }
 
 .empty,
-.error {
-  color: var(--day-secondary);
-  font-size: clamp(1rem, 1.7vw, 1.35rem);
+.error{
+
+  color:#888;
+
 }
 
-#status {
-  position: fixed;
-  right: 1rem;
-  bottom: 0.75rem;
-  color: #9a9a9a;
-  font-size: 0.7rem;
-  opacity: 0;
-  transition: opacity 300ms ease;
+/* ---------------- STATUS ---------------- */
+
+#status{
+
+  position:fixed;
+
+  bottom:1rem;
+
+  right:1rem;
+
+  font-size:.7rem;
+
+  opacity:0;
+
 }
 
-#status.visible {
-  opacity: 1;
+#status.visible{
+
+  opacity:1;
+
 }
 
-#status.error {
-  color: #a05a5a;
+/* ---------------- NIGHT MODE ---------------- */
+
+body.night{
+
+  background:#000;
+
+  color:#bdbdbd;
+
 }
 
-/* Night mode: OLED black, dim grey text, time and date only. */
-body.night {
-  background: var(--night-background);
-  color: var(--night-foreground);
+body.night #dashboard{
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  align-items:flex-start;
+
+  padding:10vh 8vw;
+
+  opacity:var(--night-opacity,.08);
+
 }
 
-body.night #dashboard {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100vw;
-  height: 100vh;
-  padding: 10vh 8vw;
-  opacity: var(--night-opacity, 0.08);
+body.night #clock-main{
+
+  font-size:clamp(6rem,20vw,15rem);
+
+  color:#bdbdbd;
+
 }
 
-body.night .left-panel {
-  display: block;
-  width: 100%;
-}
+body.night #date{
 
-body.night #clock {
-  color: var(--night-foreground);
-}
+  color:#bdbdbd;
 
-body.night #clock-main {
-  font-size: clamp(6rem, 20vw, 15rem);
-}
-
-body.night #date {
-  margin-top: 5vh;
-  color: var(--night-foreground);
 }
 
 body.night #weather,
 body.night .right-panel,
-body.night #status {
-  display: none;
+body.night #status{
+
+  display:none;
+
 }
 
-/* Burn-in mitigation: a subtle movement every 12 minutes. */
-body.shift-0 #dashboard { transform: translate(0, 0); }
-body.shift-1 #dashboard { transform: translate(3px, 1px); }
-body.shift-2 #dashboard { transform: translate(-2px, 3px); }
-body.shift-3 #dashboard { transform: translate(2px, -2px); }
-body.shift-4 #dashboard { transform: translate(-3px, -1px); }
+/* ---------------- BURN-IN PROTECTION ---------------- */
 
-@media (orientation: portrait) {
-  #dashboard {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 4vh;
-    padding: 6vh 7vw;
-  }
-
-  .left-panel,
-  .right-panel {
-    grid-column: 1;
-  }
-
-  #clock-main {
-    font-size: clamp(5rem, 24vw, 9rem);
-  }
-
-  .right-panel {
-    padding-top: 3vh;
-    padding-left: 0;
-    border-left: 0;
-    border-top: 2px solid var(--day-divider);
-  }
-
-  body.night #dashboard {
-    display: flex;
-    padding: 8vh 7vw;
-  }
+body.shift-0 #dashboard{
+  transform:translate(0,0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html,
-  body,
-  #dashboard,
-  #events {
-    transition: none;
+body.shift-1 #dashboard{
+  transform:translate(3px,1px);
+}
+
+body.shift-2 #dashboard{
+  transform:translate(-2px,3px);
+}
+
+body.shift-3 #dashboard{
+  transform:translate(2px,-2px);
+}
+
+body.shift-4 #dashboard{
+  transform:translate(-3px,-1px);
+}
+
+/* ---------------- PORTRAIT ---------------- */
+
+@media (orientation:portrait){
+
+  #dashboard{
+
+    grid-template-columns:1fr;
+
+    grid-template-rows:auto 1fr;
+
+    gap:4vh;
+
   }
 
-  #clock.tick {
-    animation: none;
+  .right-panel{
+
+    padding-top:2rem;
+
+    padding-left:0;
+
+    border-left:none;
+
+    border-top:2px solid var(--day-divider);
+
   }
+
+  #clock-main{
+
+    font-size:clamp(5rem,24vw,9rem);
+
+  }
+
 }
