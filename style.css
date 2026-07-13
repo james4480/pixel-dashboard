@@ -45,7 +45,7 @@ html, body {
 
 #clock {
   font-size: clamp(6rem, 20vw, 15rem);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 0.9;
   letter-spacing: -0.07em;
   font-variant-numeric: tabular-nums;
@@ -57,18 +57,23 @@ html, body {
   margin-top: 4vh;
   font-size: clamp(1.6rem, 3.2vw, 3rem);
   line-height: 1.2;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 #weather {
-  margin-top: 2vh;
-  color: var(--secondary);
-  font-size: clamp(0.8rem, 1.6vw, 1.5rem);
+    margin-top:3vh;
+
+    color:#888;
+
+    font-size:clamp(.8rem,1.5vw,1.4rem);
+
+    font-weight:500;
+
 }
 
 .right-panel {
   overflow: hidden;
-  border-left: 1px solid var(--divider);
+ border-left:2px solid #e5e5e5;
   padding-left: 4vw;
 }
 
@@ -83,11 +88,18 @@ html, body {
 
 .day-group { margin-bottom: 2vh; }
 
-.day-label {
-  color: var(--secondary);
-  font-size: clamp(0.9rem, 1.7vw, 1.35rem);
-  font-weight: 600;
-  margin-bottom: 0.5vh;
+.day-label{
+
+    color:#888;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    font-size:clamp(.8rem,1.3vw,1.2rem);
+
 }
 
 .event {
@@ -108,6 +120,7 @@ html, body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight:500;
 }
 
 .empty, .error {
@@ -124,10 +137,22 @@ html, body {
 }
 
 /* Sunset mode: OLED black background with only clock and date. */
-body.night #dashboard {
-  display: block;
-  padding: 12vh 8vw;
-  opacity: var(--night-opacity, 0.12);
+body.night #dashboard{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:flex-start;
+
+    height:100vh;
+
+    padding:10vh;
+
+    opacity:var(--night-opacity);
+
 }
 
 body.night .left-panel {
