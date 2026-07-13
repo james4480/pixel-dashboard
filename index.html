@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#fafafa">
   <title>Home Dashboard</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
   >
 
@@ -17,18 +17,21 @@
 </head>
 <body>
   <main id="dashboard">
-    <section class="left-panel">
-      <div id="clock">--:--</div>
+    <section class="left-panel" aria-label="Time and weather">
+      <div id="clock" aria-live="off">--:--</div>
       <div id="date">Loading date…</div>
-      <div id="weather">Loading weather…</div>
+
+      <div id="weather" aria-live="polite">
+        <div id="temperature-range">Loading weather…</div>
+        <div id="weather-condition"></div>
+      </div>
     </section>
 
-    <section class="right-panel">
-      <h1>Next 7 days</h1>
+    <section class="right-panel" aria-label="Upcoming calendar events">
       <div id="events">Loading calendar…</div>
     </section>
 
-    <div id="status"></div>
+    <div id="status" aria-hidden="true"></div>
   </main>
 
   <script src="config.js"></script>
