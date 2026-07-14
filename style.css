@@ -365,3 +365,52 @@ body.shift-4 #dashboard {
     }
 
 }
+/* =======================================================
+   INTERNET WATCHDOG
+   ======================================================= */
+
+#internet-status {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+
+  margin-top: 2vh;
+
+  color: var(--day-secondary);
+  font-size: clamp(0.7rem, 1vw, 0.95rem);
+  font-weight: 500;
+}
+
+#internet-status-dot {
+  width: 0.72rem;
+  height: 0.72rem;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+  background: #9a9a9a;
+
+  box-shadow: 0 0 0 0.15rem rgb(154 154 154 / 15%);
+
+  transition:
+    background-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+#internet-status.online #internet-status-dot {
+  background: #29a35a;
+  box-shadow: 0 0 0 0.15rem rgb(41 163 90 / 18%);
+}
+
+#internet-status.offline #internet-status-dot {
+  background: #d44343;
+  box-shadow: 0 0 0 0.15rem rgb(212 67 67 / 18%);
+}
+
+#internet-status.checking #internet-status-dot {
+  background: #9a9a9a;
+}
+
+body.night #internet-status {
+  display: none;
+}
