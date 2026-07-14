@@ -59,10 +59,30 @@
         throw new Error("Unexpected health-check response");
       }
 
-      setStatus("online", "Internet online");
+const checkedAt = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+}).format(new Date());
+
+setStatus(
+    "online",
+    `Internet online (${checkedAt})`
+);
     } catch (error) {
       console.warn("Internet check failed:", error);
-      setStatus("offline", "Internet offline");
+const checkedAt = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+}).format(new Date());
+
+setStatus(
+    "offline",
+    `Internet offline (last checked ${checkedAt})`
+);
     } finally {
       window.clearTimeout(timeout);
       checkInProgress = false;
