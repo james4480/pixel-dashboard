@@ -10,7 +10,6 @@
 
   const RAIN_PROBABILITY_THRESHOLD = 40;
 
-  // Fixed location for pollen information: Zug, Switzerland.
   const ZUG_LATITUDE = 47.1662;
   const ZUG_LONGITUDE = 8.5155;
 
@@ -63,7 +62,6 @@
     }
 
     const style = document.createElement("style");
-
     style.id = "dashboard-extras-styles";
 
     style.textContent = `
@@ -71,7 +69,7 @@
         margin-top: 0.35rem;
         color: var(--day-tertiary, #b5b5b5);
         font-size: 0.82em;
-        font-weight: 400;
+        font-weight: 500;
         line-height: 1.35;
       }
 
@@ -141,7 +139,7 @@
       const pollen = document.createElement("div");
 
       pollen.id = "pollen-status";
-      pollen.textContent = "Pollen Zug: loading…";
+      pollen.textContent = "Pollen: loading…";
 
       weatherEl.appendChild(pollen);
     }
@@ -356,28 +354,6 @@
     }
   }
 
-  function pollenDisplayName(variable) {
-    const names = {
-      alder_pollen: "Alder",
-      birch_pollen: "Birch",
-      grass_pollen: "Grass",
-      mugwort_pollen: "Mugwort",
-      ragweed_pollen: "Ragweed"
-    };
-
-    return names[variable] || variable;
-  }
-
-  /*
-   * These are simple dashboard thresholds rather than
-   * an official medical pollen index.
-   *
-   * They classify the current dominant pollen concentration:
-   *
-   * Low:    below 10 grains/m³
-   * Medium: 10 to below 50 grains/m³
-   * High:   50 grains/m³ or above
-   */
   function pollenLevel(value) {
     if (value < 10) {
       return "Low";
@@ -442,9 +418,7 @@
       }
 
       const data = await response.json();
-
-      const times =
-        data.hourly?.time || [];
+      const times = data.hourly?.time || [];
 
       if (!times.length) {
         throw new Error(
@@ -474,53 +448,26 @@
         }
       });
 
-      const readings = variables.map(
-        variable => ({
-          variable,
-          value: Math.max(
-            0,
-            Number(
-              data.hourly?.[variable]?.[
-                nearestIndex
-              ] ?? 0
-            )
+      const values = variables.map(variable =>
+        Math.max(
+          0,
+          Number(
+            data.hourly?.[variable]?.[
+              nearestIndex
+            ] ?? 0
           )
-        })
+        )
       );
 
-      const dominant = readings.reduce(
-        (highest, reading) =>
-          reading.value > highest.value
-            ? reading
-            : highest,
-        {
-          variable: "",
-          value: 0
-        }
-      );
-
-      if (dominant.value < 0.1) {
-        pollenEl.textContent =
-          "Pollen Zug: Low · none detected";
-
-        applyPollenClass(
-          pollenEl,
-          "Low"
-        );
-
-        return;
-      }
-
-      const level =
-        pollenLevel(dominant.value);
-
-      const pollenName =
-        pollenDisplayName(
-          dominant.variable
-        );
+      /*
+       * The overall level is based on the highest current
+       * concentration among the available pollen types.
+       */
+      const highestValue = Math.max(...values);
+      const level = pollenLevel(highestValue);
 
       pollenEl.textContent =
-        `Pollen Zug: ${level} · ${pollenName}`;
+        `Pollen: ${level}`;
 
       applyPollenClass(
         pollenEl,
@@ -533,7 +480,7 @@
       );
 
       pollenEl.textContent =
-        "Pollen Zug: unavailable";
+        "Pollen: unavailable";
 
       pollenEl.classList.remove(
         "low",
@@ -543,43 +490,86 @@
     }
   }
 
-  function trainName(connection) {
+  function normaliseTrainCode(value) {
+    if (!value) {
+      return "";
+    }
+
+    return String(value)
+      .toUpperCase()
+      .replace(/\s+/g, "")
+      .replace(/^S-BAHN/, "S")
+      .replace(/^INTERREGIO/, "IR")
+      .replace(/^INTERCITY/, "IC")
+      .replace(/^REGIOEXPRESS/, "RE")
+      .replace(/^REGIONAL/, "R");
+  }
+
+  function trainCode(connection) {
     const sections =
       Array.isArray(connection?.sections)
         ? connection.sections
         : [];
 
-    const railSection =
-      sections.find(
-        section => section?.journey
-      );
+    for (const section of sections) {
+      const journey = section?.journey;
 
-    if (railSection?.journey) {
-      const journey =
-        railSection.journey;
-
-      if (journey.name) {
-        return journey.name;
+      if (!journey) {
+        continue;
       }
 
-      const parts = [
-        journey.category,
-        journey.number
-      ]
-        .filter(Boolean)
-        .map(String);
+      const category =
+        normaliseTrainCode(journey.category);
 
-      if (parts.length) {
-        return parts.join(" ");
+      const number =
+        normaliseTrainCode(journey.number);
+
+      /*
+       * Examples:
+       * category "IR", number "70" becomes "IR70".
+       * category "S", number "24" becomes "S24".
+       */
+      if (category && number) {
+        if (number.startsWith(category)) {
+          return number;
+        }
+
+        return `${category}${number}`;
+      }
+
+      const name =
+        normaliseTrainCode(journey.name);
+
+      if (name) {
+        const match = name.match(
+          /\b(?:S|IR|IC|RE|EC|R|PE)\d+[A-Z]?\b/
+        );
+
+        if (match) {
+          return match[0];
+        }
       }
     }
 
     const products =
       Array.isArray(connection?.products)
-        ? connection.products.filter(Boolean)
+        ? connection.products
         : [];
 
-    return products[0] || "Train";
+    for (const product of products) {
+      const normalised =
+        normaliseTrainCode(product);
+
+      const match = normalised.match(
+        /(?:S|IR|IC|RE|EC|R|PE)\d+[A-Z]?/
+      );
+
+      if (match) {
+        return match[0];
+      }
+    }
+
+    return "Train";
   }
 
   async function loadNextTrain() {
@@ -597,12 +587,11 @@
       return;
     }
 
-    const params =
-      new URLSearchParams({
-        from: TRAIN_FROM,
-        to: TRAIN_TO,
-        limit: "1"
-      });
+    const params = new URLSearchParams({
+      from: TRAIN_FROM,
+      to: TRAIN_TO,
+      limit: "1"
+    });
 
     try {
       const response =
@@ -658,23 +647,20 @@
             )
           : null;
 
-      const name =
-        trainName(connection);
+      const code =
+        trainCode(connection);
 
       const delaySeconds = Number(
         connection.from?.delay ?? 0
       );
 
-      const delayMinutes =
-        Math.max(
-          0,
-          Math.round(
-            delaySeconds / 60
-          )
-        );
+      const delayMinutes = Math.max(
+        0,
+        Math.round(delaySeconds / 60)
+      );
 
       mainEl.innerHTML =
-        `<strong>${departure}</strong> · ${name}`;
+        `<strong>${departure}</strong> · ${code}`;
 
       const details = [];
 
