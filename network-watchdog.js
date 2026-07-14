@@ -4,12 +4,6 @@
   const CHECK_INTERVAL_MS = 30 * 1000;
   const REQUEST_TIMEOUT_MS = 7000;
 
-  /*
-   * This endpoint returns a tiny response and permits browser requests.
-   * The timestamp prevents cached responses from being reused.
-   */
-  const CHECK_URL = "https://www.google.com/generate_204";
-
   const statusEl = document.getElementById("internet-status");
   const statusTextEl = document.getElementById("internet-status-text");
 
@@ -36,35 +30,48 @@
     setStatus("checking", "Checking");
 
     const controller = new AbortController();
-    const timeout = setTimeout(
-      () => controller.abort(),
-      REQUEST_TIMEOUT_MS
-    );
+
+    const timeout = window.setTimeout(() => {
+      controller.abort();
+    }, REQUEST_TIMEOUT_MS);
 
     try {
-      /*
-       * no-cors allows the connectivity test without needing to read
-       * the remote response body. A successfully completed request
-       * means the browser reached the external server.
-       */
-      await fetch(`${CHECK_URL}?t=${Date.now()}`, {
+      const checkUrl = new URL(
+        "internet-check.txt",
+        window.location.href
+      );
+
+      checkUrl.searchParams.set("timestamp", Date.now().toString());
+
+      const response = await fetch(checkUrl.toString(), {
         method: "GET",
-        mode: "no-cors",
         cache: "no-store",
         signal: controller.signal
       });
 
+      if (!response.ok) {
+        throw new Error(`Health check returned HTTP ${response.status}`);
+      }
+
+      const text = await response.text();
+
+      if (text.trim() !== "online") {
+        throw new Error("Unexpected health-check response");
+      }
+
       setStatus("online", "Internet online");
     } catch (error) {
-      console.warn("Internet watchdog check failed:", error);
+      console.warn("Internet check failed:", error);
       setStatus("offline", "Internet offline");
     } finally {
-      clearTimeout(timeout);
+      window.clearTimeout(timeout);
       checkInProgress = false;
     }
   }
 
-  window.addEventListener("online", checkInternet);
+  window.addEventListener("online", () => {
+    checkInternet();
+  });
 
   window.addEventListener("offline", () => {
     setStatus("offline", "Internet offline");
@@ -77,7 +84,11 @@
   });
 
   checkInternet();
-  setInterval(checkInternet, CHECK_INTERVAL_MS);
+
+  window.setInterval(
+    checkInternet,
+    CHECK_INTERVAL_MS
+  );
 
   window.dashboardNetworkWatchdog = {
     check: checkInternet
