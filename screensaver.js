@@ -19,7 +19,7 @@
     "Make room for what matters."
   ];
 
-  const intervalMs = 30 * 60 * 1000;
+  const intervalMs = 30 * 1000;
   const durationMs = 60 * 1000;
   let previousIndex = -1;
   let hideTimer;
