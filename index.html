@@ -17,16 +17,23 @@
 </head>
 <body>
   <main id="dashboard">
-    <section class="left-panel" aria-label="Time and weather">
-      <div id="clock" aria-live="off"><span id="clock-main">--:--</span></div>
-      <div id="date">Loading date…</div>
+<section class="left-panel" aria-label="Time and weather">
+  <div id="clock" aria-live="off">
+    <span id="clock-main">--:--</span>
+  </div>
 
-      <div id="weather" aria-live="polite">
-        <div id="temperature-range">Loading weather…</div>
-        <div id="weather-condition"></div>
-      </div>
-    </section>
+  <div id="date">Loading date…</div>
 
+  <div id="weather" aria-live="polite">
+    <div id="temperature-range">Loading weather…</div>
+    <div id="weather-condition"></div>
+  </div>
+
+  <div id="internet-status" title="Checking internet connection">
+    <span id="internet-status-dot"></span>
+    <span id="internet-status-text">Checking</span>
+  </div>
+</section>
     <section class="right-panel" aria-label="Upcoming calendar events">
       <div id="events">Loading calendar…</div>
     </section>
