@@ -8,6 +8,8 @@
   const statusTextEl = document.getElementById("internet-status-text");
 
   let checkInProgress = false;
+  let lastSuccessfulCheck = null;
+  let lastStatus = "checking";
 
   function setStatus(status, text) {
     if (!statusEl || !statusTextEl) {
@@ -21,13 +23,70 @@
     statusEl.title = text;
   }
 
+  function ageString(date) {
+    if (!date) {
+      return null;
+    }
+
+    const elapsedSeconds = Math.max(
+      0,
+      Math.floor((Date.now() - date.getTime()) / 1000)
+    );
+
+    if (elapsedSeconds < 60) {
+      return `${elapsedSeconds}s ago`;
+    }
+
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const remainingSeconds = elapsedSeconds % 60;
+
+    if (minutes < 60) {
+      return `${minutes}m ${remainingSeconds}s ago`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    return `${hours}h ${remainingMinutes}m ago`;
+  }
+
+  function updateStatusText() {
+    const age = ageString(lastSuccessfulCheck);
+
+    if (lastStatus === "checking") {
+      setStatus("checking", "Checking");
+      return;
+    }
+
+    if (lastStatus === "online") {
+      setStatus(
+        "online",
+        age
+          ? `Internet online · ${age}`
+          : "Internet online"
+      );
+
+      return;
+    }
+
+    if (lastStatus === "offline") {
+      setStatus(
+        "offline",
+        age
+          ? `Internet offline · last success ${age}`
+          : "Internet offline · no successful check yet"
+      );
+    }
+  }
+
   async function checkInternet() {
     if (checkInProgress) {
       return;
     }
 
     checkInProgress = true;
-    setStatus("checking", "Checking");
+    lastStatus = "checking";
+    updateStatusText();
 
     const controller = new AbortController();
 
@@ -41,7 +100,10 @@
         window.location.href
       );
 
-      checkUrl.searchParams.set("timestamp", Date.now().toString());
+      checkUrl.searchParams.set(
+        "timestamp",
+        Date.now().toString()
+      );
 
       const response = await fetch(checkUrl.toString(), {
         method: "GET",
@@ -50,39 +112,27 @@
       });
 
       if (!response.ok) {
-        throw new Error(`Health check returned HTTP ${response.status}`);
+        throw new Error(
+          `Health check returned HTTP ${response.status}`
+        );
       }
 
       const text = await response.text();
 
       if (text.trim() !== "online") {
-        throw new Error("Unexpected health-check response");
+        throw new Error(
+          "Unexpected health-check response"
+        );
       }
 
-const checkedAt = new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false
-}).format(new Date());
-
-setStatus(
-    "online",
-    `Internet online (${checkedAt})`
-);
+      lastSuccessfulCheck = new Date();
+      lastStatus = "online";
+      updateStatusText();
     } catch (error) {
       console.warn("Internet check failed:", error);
-const checkedAt = new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false
-}).format(new Date());
 
-setStatus(
-    "offline",
-    `Internet offline (last checked ${checkedAt})`
-);
+      lastStatus = "offline";
+      updateStatusText();
     } finally {
       window.clearTimeout(timeout);
       checkInProgress = false;
@@ -94,7 +144,8 @@ setStatus(
   });
 
   window.addEventListener("offline", () => {
-    setStatus("offline", "Internet offline");
+    lastStatus = "offline";
+    updateStatusText();
   });
 
   document.addEventListener("visibilitychange", () => {
@@ -108,6 +159,11 @@ setStatus(
   window.setInterval(
     checkInternet,
     CHECK_INTERVAL_MS
+  );
+
+  window.setInterval(
+    updateStatusText,
+    1000
   );
 
   window.dashboardNetworkWatchdog = {
